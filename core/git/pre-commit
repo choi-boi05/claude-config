@@ -1,0 +1,26 @@
+#!/bin/sh
+# Global pre-commit hook (core.hooksPath): block commits containing secrets.
+# Bypass for a known false positive: add `gitleaks:allow` on that line, or
+# list the fingerprint in the repo's .gitleaksignore. Avoid `--no-verify`.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner --log-level warn || {
+    echo "Commit blocked: gitleaks found a possible secret (values redacted above)." >&2
+    exit 1
+  }
+else
+  echo "warning: gitleaks not installed; secret scan skipped" >&2
+fi
+# Unused imports/variables in staged Python files (skipped if ruff isn't installed).
+if command -v ruff >/dev/null 2>&1; then
+  py_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.py')
+  if [ -n "$py_files" ]; then
+    echo "$py_files" | tr '\n' '\0' | xargs -0 ruff check --no-cache --isolated --output-format concise --select F401,F841 >&2 || {
+      echo "Commit blocked: unused imports/variables above. Fix: ruff check --fix --isolated --select F401,F841 <files>, or mark an intended one with  # noqa: F401" >&2
+      exit 1
+    }
+  fi
+fi
+# A global hooksPath disables repo-local hooks, so run the repo's own one too.
+local_hook="$(git rev-parse --git-common-dir)/hooks/pre-commit"
+[ -x "$local_hook" ] && exec "$local_hook" "$@"
+exit 0

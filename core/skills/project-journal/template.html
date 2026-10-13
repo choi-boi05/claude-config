@@ -1,0 +1,251 @@
+<title>Project name Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an engineering logbook. One reading column, a header strip with status, then sections in the order a reviewer asks: what, how, why, when, what's left, what we learned. */
+:root {
+  --bg: #f5f7f9;
+  --surface: #ffffff;
+  --fg: #18212c;
+  --muted: #5a6574;
+  --line: #dbe1e8;
+  --accent: #2c5a86;
+  --decision: #a8620c;
+  --ok: #2f7a4f; --warn: #a8620c; --bad: #b23a3a;
+  --f-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161c; --surface: #181f27; --fg: #e3e8ee; --muted: #97a1ae; --line: #2a333e;
+    --accent: #85aedb; --decision: #e2a14d; --ok: #6fc193; --warn: #e2a14d; --bad: #ec8080;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161c; --surface: #181f27; --fg: #e3e8ee; --muted: #97a1ae; --line: #2a333e;
+  --accent: #85aedb; --decision: #e2a14d; --ok: #6fc193; --warn: #e2a14d; --bad: #ec8080;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.6 var(--f-body); }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; padding-block: 40px 72px; display: grid; gap: 44px; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); font-weight: 700; }
+h2 { font-size: 1.3rem; font-weight: 600; }
+p { margin: 0; }
+.label { font: 500 0.72rem/1.4 var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.mono { font-family: var(--f-mono); font-size: 0.85em; font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.empty { color: var(--muted); font-style: italic; }
+
+header { display: grid; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+.summary { font-size: 1.08rem; max-width: 65ch; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 600 0.78rem/1 var(--f-body); padding: 6px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill[data-level="on-track"], .pill[data-level="done"] { color: var(--ok); }
+.pill[data-level="at-risk"] { color: var(--warn); }
+.pill[data-level="blocked"] { color: var(--bad); }
+.pill[data-level="planning"] { color: var(--accent); }
+
+nav { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+nav a { color: var(--accent); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+nav a:hover, nav a:focus-visible { text-decoration: underline; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+section { display: grid; gap: 16px; scroll-margin-top: 16px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 10px 24px; margin: 0; }
+dl.facts dt { padding-top: 3px; }
+dl.facts dd { margin: 0; min-width: 0; }
+@media (max-width: 520px) { dl.facts { grid-template-columns: 1fr; gap: 2px; } dl.facts dd { margin-bottom: 10px; } }
+
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; }
+.diagram pre { margin: 0; }
+.components { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.components li { border-top: 2px solid var(--accent); padding-top: 8px; min-width: 0; }
+.components strong { display: block; font-weight: 600; }
+
+.decisions { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.decision { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; display: grid; gap: 8px; min-width: 0; }
+.decision-top { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.decision-top .id { color: var(--decision); font: 500 0.8rem var(--f-mono); }
+.decision-top h3 { margin: 0; font-size: 1rem; font-weight: 600; flex: 1 1 260px; }
+.alts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.alts li { font-size: 0.82rem; padding: 2px 8px; border: 1px dashed var(--line); border-radius: 4px; color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+
+.timeline { margin: 0; padding: 0; list-style: none; display: grid; }
+.timeline li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
+.timeline li > div { min-width: 0; display: grid; gap: 4px; }
+.commits { display: flex; flex-wrap: wrap; gap: 6px; }
+.commits span { font: 0.75rem var(--f-mono); color: var(--accent); }
+@media (max-width: 520px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.two > div { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.checks, .nexts, .lessons { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.checks li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+.checks li::before { content: ""; width: 12px; height: 12px; margin-top: 6px; border: 1.5px solid var(--muted); border-radius: 3px; }
+.checks li.done { color: var(--muted); text-decoration: line-through; }
+.checks li.done::before { background: var(--ok); border-color: var(--ok); }
+.nexts { counter-reset: n; }
+.nexts li { counter-increment: n; display: grid; grid-template-columns: 22px 1fr; gap: 6px; }
+.nexts li::before { content: counter(n); font: 500 0.8rem/1.9 var(--f-mono); color: var(--accent); }
+.lessons li { border-left: 2px solid var(--line); padding-left: 14px; display: grid; gap: 2px; }
+
+footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 0.82rem; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<!-- Data for the page. Append to decisions/timeline/lessons; never rewrite past entries. Never write "</" inside this block. -->
+<script type="application/json" id="journal-data">
+{
+  "project": "Project name",
+  "summary": "",
+  "audience": "",
+  "done": "",
+  "status": "Just started",
+  "statusLevel": "planning",
+  "stack": "",
+  "repo": "",
+  "updated": "",
+  "lastCommit": "",
+  "components": [],
+  "decisions": [],
+  "timeline": [],
+  "open": [],
+  "next": [],
+  "lessons": []
+}
+</script>
+
+<div class="wrap">
+  <header>
+    <span class="label">Project journal</span>
+    <h1 id="j-project"></h1>
+    <p class="summary" id="j-summary"></p>
+    <div class="meta">
+      <span class="pill" id="j-status"></span>
+      <span class="label">Updated <span class="mono" id="j-updated"></span></span>
+      <span class="label">At commit <span class="mono" id="j-commit"></span></span>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#overview">Overview</a><a href="#design">Design</a><a href="#decisions">Decisions</a><a href="#timeline">Timeline</a><a href="#open">Open and next</a><a href="#lessons">Lessons</a>
+    </nav>
+  </header>
+
+  <section id="overview">
+    <h2>Overview</h2>
+    <dl class="facts">
+      <dt class="label">For</dt><dd id="j-audience"></dd>
+      <dt class="label">Done means</dt><dd id="j-done"></dd>
+      <dt class="label">Stack</dt><dd id="j-stack"></dd>
+      <dt class="label">Repo</dt><dd id="j-repo" class="mono"></dd>
+    </dl>
+  </section>
+
+  <section id="design">
+    <h2>Design</h2>
+    <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  idea[Planned system]
+</pre>
+    </div>
+    <ul class="components" id="j-components"></ul>
+  </section>
+
+  <section id="decisions">
+    <div class="sec-head"><h2>Decision log</h2><span class="label" id="j-dcount"></span></div>
+    <ol class="decisions" id="j-decisions"></ol>
+  </section>
+
+  <section id="timeline">
+    <h2>Timeline</h2>
+    <ol class="timeline" id="j-timeline"></ol>
+  </section>
+
+  <section id="open">
+    <h2>Open and next</h2>
+    <div class="two">
+      <div><span class="label">Open questions</span><ul class="checks" id="j-open"></ul></div>
+      <div><span class="label">Next steps</span><ol class="nexts" id="j-next"></ol></div>
+    </div>
+  </section>
+
+  <section id="lessons">
+    <h2>Lessons learned</h2>
+    <ul class="lessons" id="j-lessons"></ul>
+  </section>
+
+  <footer class="muted">Source of truth: <span class="mono">docs/journal.html</span> in the repo. Updated with <span class="mono">/project-journal</span>.</footer>
+</div>
+
+<script>
+(function () {
+  var d = {};
+  try { d = JSON.parse(document.getElementById("journal-data").textContent); } catch (e) {}
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function text(id, v, fallback) { var n = $(id); if (v) { n.textContent = v; } else { n.textContent = fallback; n.classList.add("empty"); } }
+  function list(id, items, render, emptyMsg) {
+    var root = $(id);
+    if (!items || !items.length) { root.appendChild(el("li", "empty", emptyMsg)); return; }
+    items.forEach(function (it, i) { root.appendChild(render(it, i)); });
+  }
+  var levels = { "planning": "Planning", "on-track": "On track", "at-risk": "At risk", "blocked": "Blocked", "done": "Done" };
+
+  if (d.project) document.title = d.project + " Journal";
+  text("j-project", d.project, "Untitled project");
+  text("j-summary", d.summary, "No summary yet.");
+  var pill = $("j-status"); pill.dataset.level = d.statusLevel || "planning";
+  pill.textContent = d.status || levels[d.statusLevel] || "Planning";
+  text("j-updated", d.updated, "never");
+  text("j-commit", d.lastCommit, "none yet");
+  text("j-audience", d.audience, "Not set yet.");
+  text("j-done", d.done, "Not set yet.");
+  text("j-stack", d.stack, "Not chosen yet.");
+  text("j-repo", d.repo, "Local only.");
+
+  list("j-components", d.components, function (c) {
+    var li = el("li"); li.appendChild(el("strong", null, c.name)); li.appendChild(el("span", "muted", c.role)); return li;
+  }, "Components appear here once something is built.");
+
+  var decs = d.decisions || [];
+  $("j-dcount").textContent = decs.length ? decs.length + (decs.length === 1 ? " decision" : " decisions") : "";
+  list("j-decisions", decs.slice().reverse(), function (x, i) {
+    var li = el("li", "decision");
+    var top = el("div", "decision-top");
+    top.appendChild(el("span", "id", "D" + (decs.length - i)));
+    top.appendChild(el("h3", null, x.title));
+    top.appendChild(el("span", "mono muted", x.date));
+    li.appendChild(top);
+    if (x.why) li.appendChild(el("p", null, x.why));
+    if (x.alternatives && x.alternatives.length) {
+      var alts = el("ul", "alts"); alts.setAttribute("aria-label", "Alternatives considered");
+      x.alternatives.forEach(function (a) { alts.appendChild(el("li", null, a)); });
+      var wrap = el("div"); wrap.style.display = "grid"; wrap.style.gap = "6px";
+      wrap.appendChild(el("span", "label", "Considered")); wrap.appendChild(alts); li.appendChild(wrap);
+    }
+    return li;
+  }, "No decisions logged yet. Each one records what was chosen, why, and what else was considered.");
+
+  list("j-timeline", (d.timeline || []).slice().reverse(), function (t) {
+    var li = el("li"); li.appendChild(el("span", "mono muted", t.date));
+    var body = el("div"); body.appendChild(el("strong", null, t.title));
+    if (t.detail) body.appendChild(el("p", "muted", t.detail));
+    if (t.commits && t.commits.length) { var c = el("div", "commits"); t.commits.forEach(function (h) { c.appendChild(el("span", null, h)); }); body.appendChild(c); }
+    li.appendChild(body); return li;
+  }, "Milestones appear here as the project moves.");
+
+  list("j-open", d.open, function (o) { return el("li", o.done ? "done" : null, o.text); }, "Nothing open.");
+  list("j-next", d.next, function (n) { return el("li", null, n); }, "No next steps set.");
+  list("j-lessons", (d.lessons || []).slice().reverse(), function (l) {
+    var li = el("li"); li.appendChild(el("span", "mono muted", l.date)); li.appendChild(el("p", null, l.text)); return li;
+  }, "Lessons get added as they come up.");
+})();
+</script>
