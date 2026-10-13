@@ -18,7 +18,6 @@ Shared across machines from the claude-config repo. Machine-specific facts (who 
   - Before committing agent work, review its diff and re-run its checks yourself. The main session normally runs `opusplan`.
 - **Be cost-conscious.** Prefer lighter models for routine tasks, don't print huge outputs (large files, base64, full logs) into the conversation, and flag anything unusually expensive before doing it.
 - **Git: commit and push when done.** After approved work is finished and checked, commit with a clear message and push. Never force-push or rewrite history without asking.
-- **Project folders:** every Claude project lives in `~/Desktop/Claude/<project>`; create new ones there and move strays there.
 - **Documents I'll read** (reports, write-ups) go in the project as files by default, unless the project says otherwise.
 - **Artifacts** (published pages): always include one simple flowchart of the main process or system (a few boxes and arrows, inline SVG or Mermaid), placed near the top.
 - **Scheduled or cloud runs** (routines, cron jobs) don't wait for plan approval; they follow their project's instructions.
