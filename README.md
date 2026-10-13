@@ -8,7 +8,38 @@ Chase's shared Claude Code setup, used on the personal Mac and a work laptop.
 
 Personal, machine-specific content is not in this repo and stays on the machine it belongs to.
 
-## Install
+## Use it yourself
+This is a personal setup, shared as an example. The rules are written for me ("Chase"), so make a copy you can edit rather than installing it as is.
+
+**Needs:** [Claude Code](https://docs.claude.com/en/docs/claude-code), `git`, `python3` (standard library only), and optionally `jq` and [`gitleaks`](https://github.com/gitleaks/gitleaks) (the secret-scanning commit hook skips itself without it). macOS or Linux; the desktop-alert hook (`notify.py`) is macOS-only.
+
+1. **Fork** this repo (so your edits go to your own copy), then clone your fork anywhere:
+   ```
+   git clone https://github.com/<you>/claude-config.git && cd claude-config
+   ```
+2. **Preview, then install.** Nothing is deleted: anything the script replaces is moved to `~/.claude/backups/`.
+   ```
+   ./install.sh --dry-run
+   ./install.sh
+   ```
+   What it does:
+   - Links `core/CLAUDE.core.md`, `core/hooks/`, each skill in `core/skills/` and each agent in `core/agents/` into `~/.claude/`, so a `git pull` updates them.
+   - Links the git guards into `~/.config/git/` and sets the **global** `core.hooksPath` and `core.excludesfile` (skipped with a warning if you already have them). A global hooks path stops repos' own git hooks from running, except `pre-commit`, which the shared hook chains to; skip this if you rely on other repo-local hooks.
+   - Copies `templates/CLAUDE.md`, `templates/writing.md` and `core/settings.json` into `~/.claude/` **only if those files don't exist yet**.
+3. **Make it yours:**
+   - Rewrite `~/.claude/CLAUDE.md` (who you are, this machine) and `~/.claude/preferences/writing.md`. Keep the `@~/.claude/CLAUDE.core.md` line.
+   - Edit `core/CLAUDE.core.md` in your fork for your own working style (it says "Chase" and "me" throughout).
+   - If you already had a `~/.claude/settings.json`, the installer left it alone, so the hooks and status line aren't switched on yet. Copy the `hooks` and `statusLine` blocks from `core/settings.json` into it, and review its `permissions`, `model` and `env` values before adopting them.
+4. **Check it:** start a new Claude Code session and look at `/hooks`, `/model` and `/context`. The agents need access to Haiku, Sonnet and Opus; if your plan or provider names them differently, change `model:` in `core/agents/*.md`.
+
+**Uninstall** (run from your clone): remove the links and git settings, then restore anything you want from `~/.claude/backups/`.
+```
+find ~/.claude ~/.config/git -maxdepth 3 -type l -lname "$PWD/*" -print -delete
+git config --global --unset core.hooksPath; git config --global --unset core.excludesfile
+```
+Copied files (`~/.claude/CLAUDE.md`, `writing.md`, `settings.json`) stay; edit or delete them yourself.
+
+## Install (my machines)
 ```
 ./install.sh --dry-run   # see what would change
 ./install.sh             # link files; backs up anything it replaces to ~/.claude/backups/
