@@ -7,5 +7,7 @@ Machine-specific instructions. The shared rules come from the claude-config repo
 
 ## This machine
 - Work laptop: only work for my employer here. Never push changes from this machine to the personal claude-config repo.
+- Work repos: follow each repo's own branch and PR rules (the shared "commit and push when done" rule means push a branch, never straight to a protected main).
+- No personal projects, plugins or connectors on this machine.
 
 @~/.claude/CLAUDE.core.md

@@ -118,17 +118,5 @@
     "type": "command",
     "command": "python3 ~/.claude/hooks/statusline.py"
   },
-  "enabledPlugins": {
-    "mattpocock-skills@claude-plugins-official": true,
-    "product-management@knowledge-work-plugins": true
-  },
-  "extraKnownMarketplaces": {
-    "knowledge-work-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/knowledge-work-plugins"
-      }
-    }
-  },
   "theme": "dark"
 }

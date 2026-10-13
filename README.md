@@ -44,7 +44,7 @@ Copied files (`~/.claude/CLAUDE.md`, `writing.md`, `settings.json`) stay; edit o
 ./install.sh --dry-run   # see what would change
 ./install.sh             # link files; backs up anything it replaces to ~/.claude/backups/
 ```
-Then reinstall plugins with `/plugin` (mattpocock-skills, product-management) and check `/model`, `/hooks`, `/context`.
+Plugins are not turned on by `settings.json`; enable one only in the projects that use it, via that project's `.claude/settings.local.json`. Then check `/model`, `/hooks`, `/context`.
 
 ## Rules
 - Edit shared rules in `core/`; `~/.claude/CLAUDE.md` stays per machine and imports `@~/.claude/CLAUDE.core.md`.

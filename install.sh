@@ -75,4 +75,4 @@ for t in git python3 jq gitleaks; do
 done
 
 if [ "$DRY" = 1 ]; then echo "Dry run: nothing changed."; else echo "Done. Backups (if any): $BACKUP"; fi
-echo "Next: reinstall plugins with /plugin if this machine needs them (mattpocock-skills, product-management), then check /model, /hooks and /context. On Bedrock, see README (model aliases)."
+echo "Next: check /model, /hooks and /context (plugins are opt-in per project). On Bedrock, see README (model aliases)."
