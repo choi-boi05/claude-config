@@ -5,7 +5,7 @@ description: Check project CLAUDE.md files against Chase's global ~/.claude/CLAU
 
 # Sync conventions
 
-The global `~/.claude/CLAUDE.md` loads in every project. Syncing a project means **removing** project lines that repeat or contradict it, never copying global rules in. Read the global file first; it is the source of truth for the rules below.
+The global `~/.claude/CLAUDE.md` loads in every project. Syncing a project means **removing** project lines that repeat or contradict it, never copying global rules in. Read the global file and `references/lean-rules.md` first; they are the source of truth for the rules below.
 
 ## Targets
 - Args name the CLAUDE.md files or project folders to check. With no args, ask which projects (offer recent ones from `~/Desktop` with a `CLAUDE.md`).
