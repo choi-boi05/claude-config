@@ -114,7 +114,7 @@ def check_command(name, args, depth):
     if name in SHELLS:
         for i, a in enumerate(args[:-1]):
             if re.match(r"^-[a-zA-Z]*c[a-zA-Z]*$", a):
-                return check(args[i + 1], depth + 1)
+                return check(args[i + 1], depth + 1) or check_segment(args[i + 2:], depth)
         return check_segment(args, depth)
     if name == "eval":
         return check(" ".join(args), depth + 1)
