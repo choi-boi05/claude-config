@@ -67,7 +67,7 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/delegation.py",
-            "timeout": 5
+            "timeout": 2
           }
         ]
       }
