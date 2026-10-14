@@ -20,7 +20,8 @@ WRITE_REDIRECTS = {">", ">>", ">|", "&>", "&>>"}
 HOME = os.path.expanduser("~")
 HOME_TARGETS = {"/", "/*", "~", "~/", "~/*", "$HOME", "$HOME/", "$HOME/*",
                 "${HOME}", "${HOME}/", "${HOME}/*", HOME, HOME + "/", HOME + "/*"}
-HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1")
+HEREDOC = re.compile(r"(?<!<)<<(?!<)-?\s*(['\"]?)(\w+)\1")
+CHECKED = READERS | SHELLS | {"git", "gh", "rm", "eval"}
 
 
 def is_secret_path(word):
@@ -36,22 +37,24 @@ def is_secret_path(word):
 
 
 def split_heredocs(cmd):
-    """Return (cmd without heredoc bodies, [bodies fed to a shell])."""
-    lines, out, shell_bodies = cmd.split("\n"), [], []
+    """Return (cmd without heredoc bodies, [bodies fed to a shell anywhere on that line]).
+    An unclosed heredoc stays in the command, so it is checked as commands (fail closed)."""
+    lines, out, bodies = cmd.split("\n"), [], []
     i = 0
     while i < len(lines):
         line = lines[i]
         out.append(line)
         i += 1
         for m in HEREDOC.finditer(line):
-            body = []
-            while i < len(lines) and lines[i].strip() != m.group(2):
-                body.append(lines[i])
-                i += 1
-            i += 1  # skip the delimiter line
-            if re.search(r"(^|[\s;&|(])(sh|bash|zsh)\b", line[:m.start()]):
-                shell_bodies.append("\n".join(body))
-    return "\n".join(out), shell_bodies
+            end = i
+            while end < len(lines) and lines[end].strip() != m.group(2):
+                end += 1
+            if end == len(lines):
+                break
+            if any(os.path.basename(w) in SHELLS | {"eval", "source", "."} for w in line.split()):
+                bodies.append("\n".join(lines[i:end]))
+            i = end + 1  # skip the body and its delimiter line
+    return "\n".join(out), bodies
 
 
 def tokenize(cmd):
@@ -94,13 +97,22 @@ def git_sub(args):
 
 
 def check_segment(seg):
+    """Check the segment from every word that names a checked command, so wrappers
+    (timeout 5 cat, xargs cat, /usr/bin/env cat) can't hide it."""
     seg = strip_prefix(seg)
-    if not seg:
-        return None
-    name, args = os.path.basename(seg[0]), seg[1:]
+    for i, word in enumerate(seg):
+        if os.path.basename(word) in CHECKED:
+            label = check_command(os.path.basename(word), seg[i + 1:])
+            if label:
+                return label
+    return None
 
-    if name in SHELLS and "-c" in args and args.index("-c") + 1 < len(args):
-        return check(args[args.index("-c") + 1])
+
+def check_command(name, args):
+    if name in SHELLS:
+        for i, a in enumerate(args[:-1]):
+            if re.match(r"^-[a-zA-Z]*c[a-zA-Z]*$", a):
+                return check(args[i + 1])
     if name == "eval":
         return check(" ".join(args))
 
@@ -116,7 +128,7 @@ def check_segment(seg):
             return "git clean -f"
 
     if name == "gh" and len(args) >= 2:
-        if args[:2] == ["repo", "create"] and "--public" in args:
+        if args[:2] == ["repo", "create"] and any(a.startswith("--public") for a in args):
             return "creating a PUBLIC GitHub repo"
         if args[:2] == ["repo", "edit"] and ("--visibility=public" in args or any(
                 a == "--visibility" and nxt == "public" for a, nxt in zip(args, args[1:]))):
@@ -139,12 +151,12 @@ def check_segment(seg):
 
 
 def check(cmd):
-    body, shell_bodies = split_heredocs(cmd)
+    body, bodies = split_heredocs(cmd)
     for seg in segments(tokenize(body)):
         label = check_segment(seg)
         if label:
             return label
-    for b in shell_bodies:
+    for b in bodies:
         label = check(b)
         if label:
             return label
