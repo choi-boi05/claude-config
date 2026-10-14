@@ -17,7 +17,7 @@ A line `Conventions: exempt from <rule>` in a project file skips that rule for t
 
 ## Checks (per file)
 1. **size**: line count (`wc -l`). Target 60–100, hard cap 200. Under 60 is fine if nothing is missing.
-2. **duplicates**: lines that restate a global rule (plan first, ask with options, subagents/models, git commit-and-push, secrets, writing style, learning, context hygiene, CLAUDE.md hygiene). Propose deletion. If the project *narrows* a global rule (e.g. "push to `dev`, not `main`"), keep only the project-specific part.
+2. **duplicates**: lines that restate a global rule (explore/spec/code or plan first, ask with options, subagents/models, git commit-and-push, secrets, writing style, learning, context hygiene, CLAUDE.md hygiene). Propose deletion. If the project *narrows* a global rule (e.g. "push to `dev`, not `main`"), keep only the project-specific part.
 3. **conflicts**: lines that contradict a global rule. Project wins, so don't auto-delete: ask Chase whether it's intentional. If yes, keep it and suggest adding an exempt line; if no, delete it.
 4. **important-budget**: count `IMPORTANT:` lines. Over 3 → propose which to demote, and flag any already enforced by a hook (`~/.claude/settings.json`, project `.claude/settings.json`).
 5. **env-example**: if the project uses secrets (`.env` exists, or code reads env vars like `os.environ`/`getenv`/`process.env`/`dotenv`), check a committed `.env.example` exists with names only. Never read `.env` itself.

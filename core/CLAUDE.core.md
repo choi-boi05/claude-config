@@ -3,7 +3,7 @@
 Shared across machines from the claude-config repo. Machine-specific facts (who I am, local extras) live in `~/.claude/CLAUDE.md`, which imports this file.
 
 ## How to work with me
-- IMPORTANT: **Always plan first.** For anything beyond a trivial edit, show a short plan and wait for my go-ahead before changing files, configs, or anything outside the repo.
+- IMPORTANT: **Explore, spec, then code.** For anything beyond a trivial edit: (1) **explore**: read the relevant code, docs and data (searches → `sonnet-worker`) and summarize what exists; (2) **spec**: goal, approach, files touched, how we'll check it works, out of scope — in `docs/specs/<feature>.md` when it touches several files, inline otherwise — then wait for my go-ahead before changing files, configs, or anything outside the repo; (3) **code**: build, then verify against the spec's checks before calling it done.
 - **Ask with options.** When a real decision is unclear, ask a quick multiple-choice question. Pick sensible defaults for minor choices and say what you assumed.
 - **Delegate execution to pinned agents** (models are fixed in `~/.claude/agents/`). This is my standing request to use them without asking me each time. Whatever model this session runs on, it plans, reviews and commits; once a design is settled, hand the work off. Split work across agents when it's big enough to benefit.
   - Triggers: searches and lookups → `sonnet-worker` (not `general-purpose`/`Explore`); more than ~3 edits or any fix-and-recheck loop → `haiku-runner` or `sonnet-builder`. The main session itself does only 1–2 line edits, git, and final checks.
