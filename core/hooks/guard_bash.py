@@ -22,6 +22,7 @@ HOME_TARGETS = {"/", "/*", "~", "~/", "~/*", "$HOME", "$HOME/", "$HOME/*",
                 "${HOME}", "${HOME}/", "${HOME}/*", HOME, HOME + "/", HOME + "/*"}
 HEREDOC = re.compile(r"(?<!<)<<(?!<)-?\s*(['\"]?)(\w+)\1")
 CHECKED = READERS | SHELLS | {"git", "gh", "rm", "eval"}
+MAX_DEPTH = 6
 
 
 def is_secret_path(word):
@@ -51,7 +52,7 @@ def split_heredocs(cmd):
                 end += 1
             if end == len(lines):
                 break
-            if any(os.path.basename(w) in SHELLS | {"eval", "source", "."} for w in line.split()):
+            if any(os.path.basename(w) in SHELLS | {"eval", "source", "."} for w in tokenize(line)):
                 bodies.append("\n".join(lines[i:end]))
             i = end + 1  # skip the body and its delimiter line
     return "\n".join(out), bodies
@@ -96,25 +97,27 @@ def git_sub(args):
     return (args[i], args[i + 1:]) if i < len(args) else ("", [])
 
 
-def check_segment(seg):
+def check_segment(seg, depth):
     """Check the segment from every word that names a checked command, so wrappers
     (timeout 5 cat, xargs cat, /usr/bin/env cat) can't hide it."""
     seg = strip_prefix(seg)
     for i, word in enumerate(seg):
-        if os.path.basename(word) in CHECKED:
-            label = check_command(os.path.basename(word), seg[i + 1:])
-            if label:
-                return label
+        name = os.path.basename(word)
+        if name in CHECKED:
+            label = check_command(name, seg[i + 1:], depth)
+            if label or name in SHELLS or name == "eval":
+                return label  # the rest was checked by the nested call: recurse once
     return None
 
 
-def check_command(name, args):
+def check_command(name, args, depth):
     if name in SHELLS:
         for i, a in enumerate(args[:-1]):
             if re.match(r"^-[a-zA-Z]*c[a-zA-Z]*$", a):
-                return check(args[i + 1])
+                return check(args[i + 1], depth + 1)
+        return check_segment(args, depth)
     if name == "eval":
-        return check(" ".join(args))
+        return check(" ".join(args), depth + 1)
 
     if name == "git":
         sub, rest = git_sub(args)
@@ -150,14 +153,16 @@ def check_command(name, args):
     return None
 
 
-def check(cmd):
+def check(cmd, depth=0):
+    if depth > MAX_DEPTH:
+        return "a command nested too deeply to check"
     body, bodies = split_heredocs(cmd)
     for seg in segments(tokenize(body)):
-        label = check_segment(seg)
+        label = check_segment(seg, depth)
         if label:
             return label
     for b in bodies:
-        label = check(b)
+        label = check(b, depth + 1)
         if label:
             return label
     return None
@@ -168,7 +173,10 @@ if __name__ == "__main__":
         payload = json.load(sys.stdin)
     except ValueError:
         sys.exit(0)
-    label = check((payload.get("tool_input") or {}).get("command", ""))
+    try:
+        label = check((payload.get("tool_input") or {}).get("command", ""))
+    except Exception:  # fail closed: a guard bug must not let a command through silently
+        label = "a command the guard couldn't parse"
     if label:
         print(json.dumps({"hookSpecificOutput": {
             "hookEventName": "PreToolUse",
