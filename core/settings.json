@@ -27,7 +27,6 @@
     ],
     "allow": [
       "Bash(gh pr checks *)",
-      "Bash(gh pr merge *)",
       "Bash(gh pr view *)"
     ]
   },
@@ -36,7 +35,9 @@
     "anthropic-skills:computer-use": "off",
     "anthropic-skills:built-in-browser": "off",
     "anthropic-skills:morning": "off",
-    "anthropic-skills:import-memory": "off"
+    "anthropic-skills:import-memory": "off",
+    "anthropic-skills:pptx": "off",
+    "anthropic-skills:xlsx": "off"
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -62,12 +63,12 @@
         ]
       },
       {
-        "matcher": "Edit|Write|Bash|Agent|Task",
+        "matcher": "Edit|Write|Bash|Agent",
         "hooks": [
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/delegation.py",
-            "timeout": 2
+            "timeout": 5
           }
         ]
       }
