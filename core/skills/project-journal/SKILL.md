@@ -1,6 +1,6 @@
 ---
 name: project-journal
-description: Create or update a project's living journal (docs/journal.html, published as a private artifact) covering goal, design, decision log, timeline, open questions and lessons. Use when Chase types /project-journal, or as the last step of new-project-setup. In a project that has docs/journal.html, suggest running it (one line, don't run it) when a milestone ships, a real decision is made, or the design changes; never suggest it after routine edits.
+description: "Create or update a project's living journal (docs/journal.html, published as a private artifact) covering goal, design, decision log, timeline, open questions and lessons. Use when Chase types /project-journal, or as the last step of new-project-setup. In a project that has docs/journal.html, suggest running it (one line, don't run it) when a milestone ships, a real decision is made, or the design changes; never suggest it after routine edits."
 ---
 
 # Project journal
@@ -26,7 +26,7 @@ Typing `/project-journal` is the go-ahead; don't ask for plan approval. When you
 - Group commits into timeline entries by milestone, not one per commit; keep the short hashes in `commits`.
 - Update in place: overview fields, `status`/`statusLevel`, `open`, `next`, `components`, and the mermaid diagram (only when the design actually changed).
 - Set `lastCommit` and `updated`.
-- Inside the JSON, never write `</` (write `<\/`) so the script tag can't close early. Validate it parses (`python3 -c` with `json.loads` on the extracted block).
+- Inside the JSON, never write `</` (write `<\/`) so the script tag can't close early. Validate it parses: `python3 -c "import re,json;t=open('docs/journal.html').read();json.loads(re.search(r'<script type=\"application/json\" id=\"journal-data\">(.*?)</script>',t,re.S).group(1));print('ok')"` must print `ok`.
 
 ## 4. Publish
 - The Artifact tool requires loading `artifact-design` first; do so, but keep the template's design and only change content.
