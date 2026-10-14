@@ -24,6 +24,11 @@
     ],
     "ask": [
       "Bash(gh repo create *)"
+    ],
+    "allow": [
+      "Bash(gh pr checks *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh pr view *)"
     ]
   },
   "skillOverrides": {
