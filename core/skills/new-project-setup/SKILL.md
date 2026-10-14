@@ -1,6 +1,6 @@
 ---
 name: new-project-setup
-description: Set up a new project for Claude Code with a lean CLAUDE.md, docs/status.md, .gitignore and .env.example. Use when Chase starts a new project or repo, asks for a CLAUDE.md, or wants an existing project's CLAUDE.md rebuilt.
+description: "Set up a new project for Claude Code with a lean CLAUDE.md, docs/status.md, .gitignore and .env.example. Use when Chase starts a new project or repo, asks for a CLAUDE.md, or wants an existing project's CLAUDE.md rebuilt."
 ---
 
 # New project setup
@@ -8,7 +8,7 @@ description: Set up a new project for Claude Code with a lean CLAUDE.md, docs/st
 Builds a lean project harness. Chase's preferences live in the global `~/.claude/CLAUDE.md`; the project file holds only project facts. Never repeat global rules (working style, secrets, writing) in it.
 
 ## 1. Look before asking
-- New projects go in `~/Desktop/Claude/<project>`. If the folder is elsewhere, propose moving it there first.
+- Project location: read where new projects live from the user's `~/.claude/CLAUDE.md`. If the folder is elsewhere, propose moving it there first; if that file names no location, skip this.
 - Check the folder: existing code, `README`, `package.json` / `pyproject.toml` / `requirements.txt`, `Makefile`, an existing `CLAUDE.md`, git status and remote.
 - Derive what you can (language, commands, layout). Only ask for what you can't find.
 - If a `CLAUDE.md` exists, this is a rebuild: keep its true project facts, cut the rest, and show a before/after line count.

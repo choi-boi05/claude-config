@@ -1,6 +1,6 @@
 ---
 name: cleanup
-description: Find and fix dead code, duplicate logic, unused files or dependencies, and needless complexity added by recent work. Use when Chase types /cleanup, or before committing a finished feature. Args: `--full` (whole repo), `--base <ref>` (changes since a commit or branch).
+description: "Find and fix dead code, duplicate logic, unused files or dependencies, and needless complexity added by recent work. Use when Chase types /cleanup, or before committing a finished feature. Args: `--full` (whole repo), `--base REF` (changes since a commit or branch)."
 ---
 
 # Cleanup
@@ -8,7 +8,7 @@ description: Find and fix dead code, duplicate logic, unused files or dependenci
 Goal: leave the code smaller and simpler with the same behavior. Analyzers find candidates; you verify them; Chase approves; tests prove it.
 
 ## 1. Scan
-Run `bash ~/.claude/skills/cleanup/scan.sh [args]` from the project root. Default scope is everything changed since the last push plus uncommitted files. Don't paste the raw output back; summarize it.
+Run `bash ~/.claude/skills/cleanup/scan.sh [args]` from the project root. Default scope is everything changed since the last push plus uncommitted files. Don't paste the raw output back; summarize it. Any section that printed "not installed", "skipped" or "no report" (tool missing or not applicable) is reported as "not checked", never as clean.
 
 ## 2. Review the changed code yourself
 Read the diff in scope (`git diff <base>...HEAD` plus uncommitted). Look for what analyzers miss, using the "Writing code" rules in `~/.claude/CLAUDE.core.md`:

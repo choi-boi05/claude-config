@@ -1,6 +1,6 @@
 ---
 name: sync-conventions
-description: Check project CLAUDE.md files against Chase's global ~/.claude/CLAUDE.md conventions (size, duplicated or conflicting rules, IMPORTANT budget, .env.example, detail that belongs in docs/) and propose trims. Use when Chase types /sync-conventions, after the global CLAUDE.md changes, or when a project CLAUDE.md looks bloated.
+description: "Check project CLAUDE.md files against Chase's global ~/.claude/CLAUDE.md conventions (size, duplicated or conflicting rules, IMPORTANT budget, .env.example, detail that belongs in docs/) and propose trims. Use when Chase types /sync-conventions, after the global CLAUDE.md changes, or when a project CLAUDE.md looks bloated."
 ---
 
 # Sync conventions
@@ -13,7 +13,7 @@ The global `~/.claude/CLAUDE.md` loads in every project. Syncing a project means
 - **Only projects Chase built.** Skip clones or forks of other people's repos (check `git remote -v` and authorship); never edit their CLAUDE.md, AGENTS.md or GEMINI.md. List them as "skipped: not Chase's" in the report.
 
 ## Exemptions
-A line `Conventions: exempt from <rule>` in a project file skips that rule for that project. Rule names: `size`, `duplicates`, `conflicts`, `important-budget`, `env-example`, `progressive-disclosure`, `skills`. Report skipped rules as "exempt".
+A line `Conventions: exempt from <rule>` in a project file skips that rule for that project. Rule names: `size`, `duplicates`, `conflicts`, `important-budget`, `env-example`, `progressive-disclosure`, `skills`, `skill-frontmatter`. Report skipped rules as "exempt".
 
 ## Checks (per file)
 1. **size**: line count (`wc -l`). Target 60–100, hard cap 200. Under 60 is fine if nothing is missing.
@@ -23,6 +23,7 @@ A line `Conventions: exempt from <rule>` in a project file skips that rule for t
 5. **env-example**: if the project uses secrets (`.env` exists, or code reads env vars like `os.environ`/`getenv`/`process.env`/`dotenv`), check a committed `.env.example` exists with names only. Never read `.env` itself.
 6. **progressive-disclosure**: situational detail (long procedures, schemas, reference tables, history, one workflow's steps) → propose moving to `docs/<topic>.md` or `.claude/rules/` with a plain-text pointer ("Before X, read `docs/x.md`"). Flag `@` imports that aren't needed every session. Also flag stale or vague lines ("write clean code").
 7. **skills**: each project skill's `SKILL.md` over ~60 lines, or holding long templates/examples/tables inline → propose moving that material to `references/` with a pointer at the step that uses it.
+8. **skill-frontmatter**: each project skill's `SKILL.md` frontmatter parses; `description` is double-quoted, has no unquoted ` #` and no `<angle>` placeholders, is at most 1024 chars, and has a "Use when/for" trigger.
 
 ## Report (show before editing anything)
 For each project:

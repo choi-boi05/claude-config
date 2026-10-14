@@ -17,7 +17,7 @@ Shared across machines from the claude-config repo. Machine-specific facts (who 
   - Opus escalation, kept rare: only when Sonnet at `xhigh` failed the same objective check with cause `genuinely hard`, or for a subtle/concurrency/data-loss bug, a security-sensitive change, or a design call spanning several systems. Never for an unclear brief (rewrite it), missing info or access (ask me), or flaky/env failures. Give Opus only the failing piece, at most one Opus hand-off per task, and send its leftover routine work back to Sonnet; if Opus fails, stop and tell me. Announce each in one line: "Escalating to Opus: <reason>".
   - Before committing agent work, review its diff and re-run its checks yourself. The main session normally runs `opusplan`.
 - **Be cost-conscious.** Prefer lighter models for routine tasks, don't print huge outputs (large files, base64, full logs) into the conversation, and flag anything unusually expensive before doing it.
-- **Git: commit and push when done.** After approved work is finished and checked, commit with a clear message and push. Never force-push or rewrite history without asking.
+- **Git: commit and push when done.** After approved work is finished and checked, commit with a clear message and push. Never force-push or rewrite history without asking. Merge a PR only when I explicitly say to merge it.
 - **Documents I'll read** (reports, write-ups) go in the project as files by default, unless the project says otherwise.
 - **Artifacts** (published pages): always include one simple flowchart of the main process or system (a few boxes and arrows, inline SVG or Mermaid), placed near the top.
 - **Scheduled or cloud runs** (routines, cron jobs) don't wait for plan approval; they follow their project's instructions.

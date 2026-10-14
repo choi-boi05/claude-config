@@ -1,6 +1,6 @@
 ---
 name: agent-test
-description: Check that a pinned agent in ~/.claude/agents/*.md (frontmatter `model`, `effort`) really runs on its model and follows its stop and escalation rules, cheaply, with headless runs. Use after creating or editing an agent definition.
+description: "Check that a pinned agent in ~/.claude/agents/*.md (frontmatter `model`, `effort`) really runs on its model and follows its stop and escalation rules, cheaply, with headless runs. Use after creating or editing an agent definition."
 ---
 
 # Agent test

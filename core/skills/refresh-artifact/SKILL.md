@@ -1,6 +1,6 @@
 ---
 name: refresh-artifact
-description: Update a project's published overview page (a private claude.ai Artifact) so it matches the repo, then republish to the same URL. Use when Chase says "refresh the artifact", "refresh the overview" or "refresh the map", or after a project's status changes.
+description: "Update a project's published overview page (a private claude.ai Artifact) so it matches the repo, then republish to the same URL. Use when Chase says \"refresh the artifact\", \"refresh the overview\" or \"refresh the map\", or after a project's status changes."
 ---
 
 # Refresh artifact
