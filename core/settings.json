@@ -22,9 +22,6 @@
       "Read(~/.aws/credentials)",
       "Read(~/.netrc)"
     ],
-    "ask": [
-      "Bash(gh repo create *)"
-    ],
     "allow": [
       "Bash(gh pr checks *)",
       "Bash(gh pr view *)"
@@ -110,6 +107,7 @@
     ],
     "Notification": [
       {
+        "matcher": "permission_prompt",
         "hooks": [
           {
             "type": "command",
